@@ -64,15 +64,21 @@ plot.ts(cbind(meantemp_series,fdiff_meantemp), main="")
 acf2(fdiff_meantemp)
 
 
-x <- auto.arima(meantemp_series, lambda=0)
+x <- auto.arima(meantemp_series, lambda=0) # recomended -> sarima(5,1,0, 0,1,0, 365)
 x
-BoxCox.lambda(meantemp_series)
-Box.test(res,lag=10, type='Ljung-Box') 
+#BoxCox.lambda(meantemp_series)
+Box.test(x,lag=10, type='Ljung-Box') 
 
-mod <- sarima(meantemp_series, 5,1,0, 0,1,0, 365)
+temp_model <- sarima(meantemp_series, 5,1,0, 0,1,0, 365) # looks good, all p-values under 0.05
+temp_model
+
+mod <- sarima(meantemp_series, 6,1,0, 0,1,0, 365) # ar6 has a p-value of 0.35, it can be discarded
 mod
 
-res = residuals(mod$fit)
+mod <- sarima(meantemp_series, 5,1,1, 0,1,0, 365) # p-values of the ar got all over 0.5
+mod  # we should keep the suggested model from auto.arima()
+
+res = residuals(temp_mod$fit)
 res
 mean(res)
 var(res)
